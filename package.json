@@ -1,0 +1,40 @@
+{
+  "name": "digiwiz-tasks",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 63477 --strictPort",
+    "build": "tsc --noEmit && tsc -p tsconfig.server.json && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 63478 --strictPort",
+    "api": "node --env-file-if-exists=.env server/index.ts",
+    "start": "node --env-file-if-exists=.env server/index.ts",
+    "db:migrate": "node --env-file-if-exists=.env server/migrate.ts",
+    "db:seed": "node --env-file-if-exists=.env server/seed.ts",
+    "db:check": "node --env-file-if-exists=.env server/check.ts",
+    "dev:sample": "node server/sample.ts",
+    "accounts:bootstrap": "node --env-file-if-exists=.env server/bootstrap.ts",
+    "attendance:reconcile": "node --env-file-if-exists=.env server/reconcile.ts",
+    "test:phase3": "node --test server/phase3.test.ts",
+    "test:phase3:db": "node --env-file-if-exists=.env server/phase3-db-check.ts",
+    "db:diagnose": "node --env-file-if-exists=.env server/diagnose-db.ts"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "mysql2": "^3.24.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-icons": "5.7.0",
+    "react-router-dom": "7.18.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.3",
+    "typescript": "5.9.3",
+    "vite": "8.1.5"
+  }
+}

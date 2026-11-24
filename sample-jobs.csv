@@ -1,0 +1,7 @@
+company,project,title,work_type,assignees,assigned_on,status,delivery_date,details,notes
+Example Retail,Website Launch,Design homepage,UI/UX,Rian,2026-11-23,In Review,2026-11-26,Prepare desktop design,Lead review requested
+Example Retail,Website Launch,Develop homepage,Website Development,Toshin,2026-11-23,To Do,2026-11-29,Build approved design,Depends on homepage design
+Example Retail,Website Launch,Design handoff,Website Design,Rian|Toshin,2026-11-23,In Progress,2026-11-28,Review components together,Check responsive layout
+Example Retail,Launch Campaign,Write launch caption,Content Writing,Example Writer,2026-11-24,Waiting for Client,2026-11-29,Draft two options,Awaiting product details
+DIGIWIZ,Internal Marketing,Edit showreel,Video Editing,Example Editor,2026-11-24,Backlog,2026-12-03,Create a short reel,Audio cleanup required
+
