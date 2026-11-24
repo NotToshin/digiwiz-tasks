@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { randomBytes, randomInt, randomUUID } from 'node:crypto';
-import { mkdir, writeFile } from 'node:fs/promises';
 import { z } from 'zod';
+import { sendMail, otpEmail } from './mailer.ts';
 import { pool } from './db.ts';
 import { digest, hashPassword, verifyPassword } from './credentials.ts';
 import { startAttendance, closeAttendance, lockStaff, reconcileStaff } from './attendance-service.ts';
@@ -30,7 +30,6 @@ accounts.use('/auth',async(req,res,next)=>{
 });
 accounts.post('/auth/challenge',async(req,res)=>{
  const data=challenge.parse(req.body);
- if(process.env.NODE_ENV==='production') return res.status(503).json({error:'Production email transport has not been configured'});
  const code=String(randomInt(100000,1000000));
  const db=await pool.getConnection();
  try {
@@ -43,11 +42,12 @@ accounts.post('/auth/challenge',async(req,res)=>{
    const [recent]:any=await db.execute('SELECT expires_at FROM auth_challenges WHERE email=? AND purpose=?',[data.email,data.purpose]);
    if(!recent.length || Number(recent[0].expires_at)<Date.now()+540000) {
     await db.execute('INSERT INTO auth_challenges VALUES (?,?,?,?,0) ON DUPLICATE KEY UPDATE digest=VALUES(digest),expires_at=VALUES(expires_at),attempts=0',[data.email,data.purpose,digest(data.email+':'+data.purpose+':'+code),Date.now()+600000]);
-    await mkdir('.local/mail',{recursive:true});
-    await writeFile('.local/mail/'+randomUUID()+'.eml','To: '+data.email+'\r\nSubject: Digiwiz '+data.purpose+' code\r\n\r\nYour code is '+code+'. It expires in 10 minutes.\r\n',{mode:0o600});
+    const mail={...otpEmail(data.purpose,code),to:data.email};
+    await sendMail(mail);
    }
   }
-  await db.commit();res.json({message:'If eligible, a code has been delivered to the local test inbox.'});
+  const delivery=process.env.SMTP_HOST?'If eligible, a code has been sent to your email.':'If eligible, a code has been delivered to the local test inbox.';
+  await db.commit();res.json({message:delivery});
  } catch(error){await db.rollback();throw error;}finally{db.release();}
 });
 accounts.post('/auth/complete',async(req,res)=>{

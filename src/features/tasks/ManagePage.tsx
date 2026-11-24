@@ -18,7 +18,7 @@ export default function ManagePage() {
   event.preventDefault(); setBusy(true); setError('');
   const form=new FormData(event.currentTarget);
   const body:any=Object.fromEntries(form);
-  if(entity==='tasks') { body.assignees=form.getAll('assignees'); if(record) body.version=record.version; }
+  if(entity==='tasks') { body.assignees=form.getAll('assignees'); body.requiresReview=form.has('requiresReview'); body.prerequisiteId=body.prerequisiteId || null; if(!body.followUpId)delete body.followUpId; if(record) body.version=record.version; }
   try {
    const response=await apiFetch('/api/'+entity+(id?'/'+id:''),{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
    if(!response.ok) throw new Error((await response.json()).error);
@@ -38,6 +38,7 @@ export default function ManagePage() {
  {entity==='projects' && <>{select('companyId','Company',[...workspace.companies])}{field('name','Project name')}{select('lead','Lead',workspace.staff)}{field('targetDate','Target date','date')}{field('summary','Summary')}</>}
  {entity==='tasks' && <>{select('projectId','Project',[...workspace.projects])}{field('title','Title')}{select('workType','Work type',workspace.workTypes)}{field('deliveryDate','Delivery date','date')}{select('status','Status',taskStatuses.map(status=>({id:status,name:status})))}{field('details','Details')}{field('notes','Notes')}<fieldset><legend>Assignees</legend>{workspace.staff.map(person=><label key={person.id}><input type="checkbox" name="assignees" value={person.id} defaultChecked={record?.assignees.includes(person.id)} />{person.name}</label>)}</fieldset></>}
  <button className="button primary" disabled={busy}>{busy?'Saving…':'Save '+entity}</button>
+ {entity==='tasks' && <><label>Priority<select name="priority" defaultValue={record?.priority || 'Normal'}>{['Low','Normal','High','Urgent'].map(priority=><option key={priority}>{priority}</option>)}</select></label><label>Prerequisite<select name="prerequisiteId" defaultValue={record?.prerequisiteId || ''}><option value="">None</option>{workspace.tasks.filter(t=>t.id!==id).map(t=><option key={t.id} value={t.id}>{t.title}</option>)}</select></label><label><input type="checkbox" name="requiresReview" defaultChecked={!!record?.requiresReview}/>Requires review</label><label>Review feedback<input name="reviewFeedback" /></label>{!id && <label>Follow-up to<select name="followUpId"><option value="">None</option>{workspace.tasks.filter(t=>t.status==='Done').map(t=><option key={t.id} value={t.id}>{t.title}</option>)}</select></label>}</>}
  <p role="status">{error}</p>
  </form></section>}
  <section className="company-section"><PageHeader title="Board" />

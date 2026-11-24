@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { FiBriefcase, FiCalendar, FiCheckSquare, FiGrid } from 'react-icons/fi';
+import { FiBell, FiBriefcase, FiCalendar, FiCheckSquare, FiGrid, FiSettings, FiUsers } from 'react-icons/fi';
 import { NavLink, Route, Routes, useSearchParams } from 'react-router-dom';
 import DashboardPage from '../features/dashboard/DashboardPage';
 import { NotFound } from './ui';
@@ -13,16 +13,21 @@ const CompaniesPage = lazy(() => import('../features/companies/CompaniesPage'));
 const TaskListPage = lazy(() => import('../features/tasks/TaskListPage'));
 const TaskDrawer = lazy(() => import('../features/tasks/TaskDrawer'));
 const TimelinePage = lazy(() => import('../features/timeline/TimelinePage'));
+const UpdatesPage = lazy(() => import('../features/tasks/UpdatesPage'));
+const SettingsPage = lazy(() => import('../features/settings/SettingsPage'));
 
 const navigation = [
- {to:'/admin',label:'Staff access',icon:FiBriefcase},
- {to:'/attendance',label:'Attendance',icon:FiCalendar},
-  { to: '/manage', label: 'Manage work', icon: FiBriefcase },
   { to: '/', label: 'Dashboard', icon: FiGrid },
   { to: '/calendar', label: 'Calendar', icon: FiCalendar },
-  { to: '/timeline', label: 'Timeline', icon: FiCalendar },
-  { to: '/companies', label: 'Companies', icon: FiBriefcase },
   { to: '/my-tasks', label: 'My tasks', icon: FiCheckSquare },
+  { to: '/companies', label: 'Companies', icon: FiBriefcase },
+  { to: '/manage', label: 'Manage work', icon: FiBriefcase },
+  { to: '/timeline', label: 'Timeline', icon: FiCalendar },
+  { to: '/activity', label: 'Activity', icon: FiGrid },
+  { to: '/notifications', label: 'Notifications', icon: FiBell },
+  { to: '/attendance', label: 'Attendance', icon: FiCalendar },
+  { to: '/admin', label: 'Staff access', icon: FiUsers },
+  { to: '/settings', label: 'Settings', icon: FiSettings },
 ];
 
 export default function App() {
@@ -56,16 +61,19 @@ export default function App() {
         <div className="workspace-content">
           <Suspense fallback={<p role="status">Loading workspace…</p>}>
             <Routes>
-<Route path="/admin" element={<AdminPage/>}/>
-<Route path="/attendance" element={<AttendancePage/>}/>
- <Route path="/manage" element={<ManagePage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/attendance" element={<AttendancePage />} />
+              <Route path="/manage" element={<ManagePage />} />
               <Route path="/" element={<DashboardPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/timeline" element={<TimelinePage />} />
+              <Route path="/activity" element={<UpdatesPage kind="activity" />} />
+              <Route path="/notifications" element={<UpdatesPage kind="notifications" />} />
               <Route path="/companies" element={<CompaniesPage />} />
               <Route path="/companies/:companyId" element={<CompaniesPage />} />
               <Route path="/companies/:companyId/projects/:projectId" element={<CompaniesPage />} />
               <Route path="/my-tasks" element={<TaskListPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<NotFound title="Page unavailable" to="/" linkText="Back to dashboard" />} />
             </Routes>
           </Suspense>
