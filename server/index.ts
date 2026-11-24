@@ -3,7 +3,6 @@ import { accounts } from './accounts.ts';
 import { attendanceRouter } from './attendance-routes.ts';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { z } from 'zod';
 import { pool } from './db.ts';
@@ -42,7 +41,6 @@ const taskSchema = z.object({
  requiresReview:z.boolean().optional(), prerequisiteId:z.string().max(64).nullable().optional(), followUpId:z.string().max(64).optional(), reviewFeedback:z.string().max(2000).optional(),
  version:z.number().int().positive().optional(),
 }).strict();
-const countsSql = await readFile('db/queries/company-task-counts.sql','utf8');
 app.get('/api/health', async (_req,res) => { await pool.query('SELECT 1'); res.json({status:'ok',mode:'local'}); });
 app.get('/api/workspace', async (req,res) => {
  const db = await pool.getConnection();
