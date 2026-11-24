@@ -8,10 +8,12 @@ import { z } from 'zod';
 import { pool } from './db.ts';
 import { readWorkspace } from './data.ts';
 import { validateTransition } from './delivery.ts';
+import { ensureDatabaseReady } from './startup.ts';
 
 const app = express();
 app.disable('x-powered-by');
 installBoundary(app);
+void ensureDatabaseReady().catch(err => console.error('Startup DB ready check error:', err));
 app.use(express.json({limit:'64kb'}));
 app.use('/api', accounts);
 app.use('/api', requireAccount);
